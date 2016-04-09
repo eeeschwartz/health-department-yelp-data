@@ -14,8 +14,8 @@
     var parseCsv = function(data) {
       var rows = data.split(/\r\n|\r|\n/g);
       var csvRows = [];
-      rows.forEach(function(foo) {
-        csvRows.push(foo.split(','));
+      rows.forEach(function(row) {
+        csvRows.push(row.split(','));
       });
       return csvRows;
     }
@@ -24,22 +24,22 @@
       return csvRows[1][0];
     }
 
-    var getFeedInfo = function(httpRequest, callback) {
+    var getFeedInfo = function(httpRequest, url, callback) {
       httpRequest.onreadystatechange = function (data) {
         if (this.readyState === 4 && this.status === 200) {
           var rows = parseCsv(this.responseText);
           callback(parseCsv(this.responseText));
         }
       }
-      httpRequest.open('GET', 'feed_info.csv')
-      httpRequest.send()
+      httpRequest.open('GET', url);
+      httpRequest.send();
     }
 
     var displayFeedDate = function(csvRows) {
       document.getElementById('feed-date').innerHTML = feedDate(csvRows);
     }
 
-    getFeedInfo(new XMLHttpRequest(), displayFeedDate)
+    getFeedInfo(new XMLHttpRequest(), 'feed_info.csv', displayFeedDate)
   </script>
 </body>
 </html>
