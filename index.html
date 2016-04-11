@@ -2,11 +2,44 @@
 <head>
 </head>
 <body>
-<p>
-  <a href="http://lives.openlexington.org/most_recent_food_scores.zip">Download most recent food scores</a> in LIVES format from Lexington, KY Health Department
-  <br>
-  <a href="https://github.com/openlexington/Lex_to_LIVES">See the code on GitHub</a>
-  <!-- Hello from new data repo! -->
-</p>
+  <p>
+    <a href="http://lives.openlexington.org/most_recent_food_scores.zip">Download most recent food scores</a> in LIVES format from Lexington, KY Health Department
+  </p>
+  <p>
+    <a href="https://github.com/openlexington/Lex_to_LIVES">See the code on GitHub</a>
+  </p>
+  <p>Feed last updated: <span id="feed-date"></span><p>
+
+  <script type="text/javascript">
+    var parseCsv = function(data) {
+      var rows = data.split(/\r\n|\r|\n/g);
+      var csvRows = [];
+      rows.forEach(function(row) {
+        csvRows.push(row.split(','));
+      });
+      return csvRows;
+    }
+
+    var feedDate = function(csvRows) {
+      return csvRows[1][0];
+    }
+
+    var getFeedInfo = function(httpRequest, url, callback) {
+      httpRequest.onreadystatechange = function (data) {
+        if (this.readyState === 4 && this.status === 200) {
+          var rows = parseCsv(this.responseText);
+          callback(parseCsv(this.responseText));
+        }
+      }
+      httpRequest.open('GET', url);
+      httpRequest.send();
+    }
+
+    var displayFeedDate = function(csvRows) {
+      document.getElementById('feed-date').innerHTML = feedDate(csvRows);
+    }
+
+    getFeedInfo(new XMLHttpRequest(), 'feed_info.csv', displayFeedDate)
+  </script>
 </body>
 </html>
